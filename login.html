@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ---------- BASE ---------- */
+/* ================= BASE ================= */
 body{
     margin:0;
     height:100vh;
@@ -17,7 +17,7 @@ body{
     justify-content:center;
 }
 
-/* ---------- LOGIN BOX ---------- */
+/* ================= LOGIN BOX ================= */
 .login-box{
     width:380px;
     background:#ffffff;
@@ -38,7 +38,7 @@ h2{
     color:#1e3a8a;
 }
 
-/* ---------- FORM ---------- */
+/* ================= FORM ================= */
 label{
     font-size:13px;
     margin-top:10px;
@@ -59,7 +59,7 @@ input:focus{
     border-color:#1e3a8a;
 }
 
-/* ---------- PASSWORD TOGGLE ---------- */
+/* ================= PASSWORD TOGGLE ================= */
 .password-box{
     position:relative;
 }
@@ -71,9 +71,10 @@ input:focus{
     cursor:pointer;
     font-size:12px;
     color:#1e3a8a;
+    user-select:none;
 }
 
-/* ---------- BUTTON ---------- */
+/* ================= BUTTON ================= */
 button{
     width:100%;
     padding:10px;
@@ -91,7 +92,7 @@ button:disabled{
     cursor:not-allowed;
 }
 
-/* ---------- STATUS ---------- */
+/* ================= STATUS ================= */
 .status{
     margin-top:15px;
     font-size:13px;
@@ -101,7 +102,7 @@ button:disabled{
 .error{color:#dc2626}
 .info{color:#1e3a8a}
 
-/* ---------- FOOTER ---------- */
+/* ================= FOOTER ================= */
 .footer{
     text-align:center;
     font-size:11px;
@@ -136,11 +137,21 @@ button:disabled{
 
 <script>
 /* =====================================================
-   SESSION CHECK – ALREADY LOGGED IN
+   PREVENT ACCESS IF ALREADY LOGGED IN
 ===================================================== */
-if(sessionStorage.getItem("loggedIn") === "true"){
-    window.location.replace("index.html");
-}
+(function(){
+    if(sessionStorage.getItem("loggedIn") === "true"){
+        window.location.replace("index.html");
+    }
+})();
+
+/* =====================================================
+   PREVENT BACK BUTTON AFTER LOGOUT
+===================================================== */
+history.pushState(null, "", location.href);
+window.onpopstate = function () {
+    history.pushState(null, "", location.href);
+};
 
 /* =====================================================
    PASSWORD TOGGLE
@@ -160,7 +171,7 @@ document.addEventListener("keydown", function(e){
 });
 
 /* =====================================================
-   ATTEMPT CONTROL (FRONTEND)
+   ATTEMPT CONTROL (FRONTEND HARDENING)
 ===================================================== */
 let attempts = 0;
 let lockUntil = 0;
@@ -176,15 +187,14 @@ function login(){
         return;
     }
 
-    const u = username.value.trim();
-    const p = password.value.trim();
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
 
     if(!u || !p){
         showStatus("Username and password required.","error");
         return;
     }
 
-    // Backend authentication will replace this
     authenticate(u, p);
 }
 
@@ -210,7 +220,6 @@ function authenticate(u, p){
         - viewer
         */
         sessionStorage.setItem("user_role", "admin");
-        // change to "clerk" or "viewer" when required
 
         window.location.replace("index.html");
 
