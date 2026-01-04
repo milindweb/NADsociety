@@ -1,253 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Society Management System</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Society Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        :root {
-            --primary: #1e3a8a;
-            --secondary: #2563eb;
-            --bg: #f3f4f6;
-            --card: #ffffff;
-            --text: #111827;
-        }
+<style>
+/* Minimal CSS – focus on structure only */
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f3f4f6;
+}
 
-        * {
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-        }
+.container{
+    padding:15px;
+}
 
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-        }
+.section{
+    background:#ffffff;
+    border:1px solid #ddd;
+    padding:15px;
+    margin-bottom:15px;
+}
 
-        /* ---------- LAYOUT ---------- */
-        .app {
-            display: flex;
-            height: 100vh;
-        }
+.section h3{
+    margin-top:0;
+    font-size:16px;
+}
 
-        /* ---------- SIDEBAR ---------- */
-        .sidebar {
-            width: 260px;
-            background: var(--primary);
-            color: #fff;
-            padding: 15px;
-            overflow-y: auto;
-        }
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:10px;
+}
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 10px;
-        }
+input{
+    width:100%;
+    padding:8px;
+}
 
-        .menu a {
-            display: block;
-            padding: 10px;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 6px;
-            margin-bottom: 5px;
-        }
+.value{
+    font-weight:bold;
+    margin-top:5px;
+}
 
-        .menu a:hover,
-        .menu a.active {
-            background: var(--secondary);
-        }
-
-        /* ---------- MAIN ---------- */
-        .main {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .header {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        /* ---------- DASHBOARD ---------- */
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: var(--card);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-
-        .card h3 {
-            margin: 0;
-            font-size: 16px;
-            color: var(--secondary);
-        }
-
-        .card p {
-            font-size: 22px;
-            margin: 8px 0 0;
-            font-weight: bold;
-        }
-
-        /* ---------- MEMBER TREE ---------- */
-        .tree {
-            background: var(--card);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-
-        .tree h3 {
-            margin-top: 0;
-        }
-
-        details {
-            margin-left: 10px;
-            margin-bottom: 6px;
-        }
-
-        summary {
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .member {
-            margin-left: 20px;
-            cursor: pointer;
-            color: var(--secondary);
-            padding: 3px 0;
-        }
-
-        .member:hover {
-            text-decoration: underline;
-        }
-
-        /* ---------- FOOTER ---------- */
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            margin-top: 30px;
-            color: #555;
-        }
-    </style>
+.hidden{
+    display:none;
+}
+</style>
 </head>
 
 <body>
-<div class="app">
 
-    <!-- ========== SIDEBAR ========== -->
-    <aside class="sidebar">
-        <h2>Society System</h2>
+<!-- ================= SESSION CHECK ================= -->
+<script>
+if(sessionStorage.getItem("loggedIn") !== "true"){
+    window.location.href = "login.html";
+}
+</script>
 
-        <nav class="menu">
-            <a href="index.html" class="active">🏠 Home</a>
-            <a href="member.html">👤 Member Profile</a>
-            <a href="Report.htm">📊 Reports</a>
-            <a href="Admin.html">⚙️ Admin</a>
-        </nav>
-    </aside>
+<!-- ================= HEADER ================= -->
+<div id="header"></div>
 
-    <!-- ========== MAIN CONTENT ========== -->
-    <main class="main">
+<!-- ================= PAGE CONTENT ================= -->
+<div class="container">
 
-        <div class="header">Dashboard</div>
+    <!-- ========== SEARCH SECTION ========== -->
+    <div class="section">
+        <h3>Member Search</h3>
 
-        <!-- DASHBOARD CARDS -->
-        <section class="dashboard">
-            <div class="card">
-                <h3>Total Members</h3>
-                <p id="totalMembers">0</p>
+        <input
+            type="text"
+            id="memberSearch"
+            placeholder="Search by Gen No / T No / Name"
+            onkeyup="searchMember()"
+        >
+
+        <!-- Autosuggest results will appear here -->
+        <div id="searchResults"></div>
+    </div>
+
+    <!-- ========== DASHBOARD SECTION ========== -->
+    <div class="section">
+        <h3>Dashboard</h3>
+
+        <div class="grid">
+
+            <div>
+                Total Active Members
+                <div class="value" id="totalActiveMembers"></div>
             </div>
-            <div class="card">
-                <h3>Active Loans</h3>
-                <p id="activeLoans">0</p>
+
+            <div>
+                Next Month Retirement
+                <div class="value" id="nextMonthRetire"></div>
             </div>
-            <div class="card">
-                <h3>Total CD Balance</h3>
-                <p id="totalCD">₹0</p>
+
+            <div>
+                Total CD
+                <div class="value" id="totalCD"></div>
             </div>
-            <div class="card">
-                <h3>Total Share Balance</h3>
-                <p id="totalShare">₹0</p>
+
+            <div>
+                Total Shares
+                <div class="value" id="totalShares"></div>
             </div>
-        </section>
 
-        <!-- MEMBER TREE -->
-        <section class="tree">
-            <h3>Members List</h3>
+            <div>
+                Active Short Loans
+                <div class="value" id="activeShortLoan"></div>
+            </div>
 
-            <!-- Employee Type -->
-            <details open>
-                <summary>Electrical</summary>
+            <div>
+                Active Long Loans
+                <div class="value" id="activeLongLoan"></div>
+            </div>
 
-                <details>
-                    <summary>SK</summary>
-                    <div class="member" onclick="openMember(101)">101 - R. Patil</div>
-                    <div class="member" onclick="openMember(102)">102 - S. More</div>
-                </details>
+            <div>
+                Total Loans Given
+                <div class="value" id="totalLoansGiven"></div>
+            </div>
 
-                <details>
-                    <summary>HSK</summary>
-                    <div class="member" onclick="openMember(103)">103 - A. Jadhav</div>
-                </details>
-            </details>
+            <div>
+                Total FD (Count / Amount)
+                <div class="value" id="totalFD"></div>
+            </div>
 
-            <details>
-                <summary>Electronics</summary>
-
-                <details>
-                    <summary>SK</summary>
-                    <div class="member" onclick="openMember(201)">201 - P. Pawar</div>
-                </details>
-            </details>
-
-            <details>
-                <summary>Fitter</summary>
-
-                <details>
-                    <summary>MCM</summary>
-                    <div class="member" onclick="openMember(301)">301 - V. Shinde</div>
-                </details>
-            </details>
-
-        </section>
-
-        <div class="footer">
-            © Society Management System | Offline Mode
         </div>
+    </div>
 
-    </main>
 </div>
 
-<!-- ========== JS ========== -->
+<!-- ================= JS ================= -->
 <script>
-    function openMember(memberId) {
-        window.location.href = "member.html?member_id=" + memberId;
+/* ---------- LOAD HEADER ---------- */
+fetch("header.html")
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById("header").innerHTML = html;
+    });
+
+/* ---------- SEARCH (STRUCTURE ONLY) ---------- */
+function searchMember(){
+    let q = document.getElementById("memberSearch").value.trim();
+
+    if(q.length < 2){
+        document.getElementById("searchResults").innerHTML = "";
+        return;
     }
 
-    // Example: Load dashboard data (later connect to Python API)
-    function loadDashboard() {
-        // Dummy values (replace with API fetch)
-        document.getElementById("totalMembers").innerText = 350;
-        document.getElementById("activeLoans").innerText = 128;
-        document.getElementById("totalCD").innerText = "₹1,25,40,000";
-        document.getElementById("totalShare").innerText = "₹82,10,000";
-    }
+    // Backend autosuggest logic will be added later
+    document.getElementById("searchResults").innerHTML =
+        "<small>Searching for: <b>" + q + "</b></small>";
+}
 
-    loadDashboard();
+/* ---------- DASHBOARD DATA ---------- */
+/*
+Backend (Python + SQLite) will:
+- Fetch all counts
+- Populate IDs below
+- No frontend calculation
+*/
 </script>
 
 </body>
