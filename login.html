@@ -135,55 +135,86 @@ button:disabled{
 </div>
 
 <script>
-/* ---------- SESSION CHECK ---------- */
-if(sessionStorage.getItem("loggedIn")==="true"){
-    window.location.href="index.html";
+/* =====================================================
+   SESSION CHECK – ALREADY LOGGED IN
+===================================================== */
+if(sessionStorage.getItem("loggedIn") === "true"){
+    window.location.replace("index.html");
 }
 
-/* ---------- PASSWORD TOGGLE ---------- */
+/* =====================================================
+   PASSWORD TOGGLE
+===================================================== */
 function togglePassword(){
-    let p = document.getElementById("password");
-    p.type = p.type === "password" ? "text" : "password";
+    const p = document.getElementById("password");
+    p.type = (p.type === "password") ? "text" : "password";
 }
 
-/* ---------- ENTER KEY ---------- */
-document.addEventListener("keydown",function(e){
-    if(e.key==="Enter") login();
+/* =====================================================
+   ENTER KEY SUPPORT
+===================================================== */
+document.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        login();
+    }
 });
 
-/* ---------- BASIC ATTEMPT CONTROL (FRONTEND) ---------- */
+/* =====================================================
+   ATTEMPT CONTROL (FRONTEND)
+===================================================== */
 let attempts = 0;
 let lockUntil = 0;
 
+/* =====================================================
+   LOGIN HANDLER
+===================================================== */
 function login(){
-    let now = Date.now();
+
+    const now = Date.now();
     if(now < lockUntil){
-        showStatus("Too many attempts. Wait a moment.","error");
+        showStatus("Too many attempts. Please wait.","error");
         return;
     }
 
-    let u = username.value.trim();
-    let p = password.value.trim();
+    const u = username.value.trim();
+    const p = password.value.trim();
 
     if(!u || !p){
         showStatus("Username and password required.","error");
         return;
     }
 
-    /* BACKEND AUTH WILL REPLACE THIS */
-    authenticate(u,p);
+    // Backend authentication will replace this
+    authenticate(u, p);
 }
 
-/* ---------- PLACEHOLDER AUTH ---------- */
-function authenticate(u,p){
+/* =====================================================
+   AUTHENTICATION PLACEHOLDER
+   (REPLACED BY PYTHON BACKEND LATER)
+===================================================== */
+function authenticate(u, p){
+
     attempts++;
     showStatus("Authenticating...","info");
 
-    setTimeout(()=>{
-        /* TEMP: always success */
-        sessionStorage.setItem("loggedIn","true");
-        window.location.href="index.html";
-    },600);
+    setTimeout(() => {
+
+        /* ================= LOGIN SUCCESS ================= */
+        sessionStorage.setItem("loggedIn", "true");
+
+        /*
+        ROLE MUST BE SET HERE ONLY
+        Possible values:
+        - admin
+        - clerk
+        - viewer
+        */
+        sessionStorage.setItem("user_role", "admin");
+        // change to "clerk" or "viewer" when required
+
+        window.location.replace("index.html");
+
+    }, 600);
 
     if(attempts >= 5){
         lockUntil = Date.now() + 30000; // 30 sec lock
@@ -191,8 +222,11 @@ function authenticate(u,p){
     }
 }
 
-function showStatus(msg,type){
-    let s = document.getElementById("status");
+/* =====================================================
+   STATUS MESSAGE
+===================================================== */
+function showStatus(msg, type){
+    const s = document.getElementById("status");
     s.textContent = msg;
     s.className = "status " + type;
 }
