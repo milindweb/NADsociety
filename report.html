@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reports</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+    --primary:#1e3a8a;
+    --secondary:#2563eb;
+    --bg:#f3f4f6;
+    --card:#ffffff;
+    --text:#111827;
+}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text)}
+
+.app{display:flex;height:100vh}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+    width:260px;
+    background:var(--primary);
+    color:#fff;
+    padding:15px;
+}
+.sidebar h2{
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.3);
+    padding-bottom:10px;
+}
+.menu a{
+    display:block;
+    padding:10px;
+    color:#fff;
+    text-decoration:none;
+    border-radius:6px;
+    margin-bottom:6px;
+}
+.menu a:hover,.menu a.active{background:var(--secondary)}
+
+/* ---------- MAIN ---------- */
+.main{flex:1;padding:20px;overflow-y:auto}
+.header{font-size:22px;font-weight:bold;margin-bottom:15px}
+
+/* ---------- CARD ---------- */
+.card{
+    background:var(--card);
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+.card h3{margin-top:0;color:var(--secondary)}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+
+button{
+    padding:10px;
+    border:none;
+    background:var(--secondary);
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+}
+button:hover{opacity:.9}
+
+select,input{
+    padding:8px;
+    width:100%;
+}
+
+.note{
+    font-size:12px;
+    color:#555;
+    margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<!-- ========== SIDEBAR ========== -->
+<aside class="sidebar">
+    <h2>Society System</h2>
+    <nav class="menu">
+        <a href="index.html">🏠 Home</a>
+        <a href="member.html">👤 Member Profile</a>
+        <a href="report.html" class="active">📊 Reports</a>
+        <a href="Admin.html">⚙️ Admin</a>
+    </nav>
+</aside>
+
+<!-- ========== MAIN ========== -->
+<main class="main">
+
+<div class="header">Excel Reports</div>
+
+<!-- ================= RECOVERY STATEMENT ================= -->
+<div class="card">
+<h3>Recovery Statement (Monthly)</h3>
+
+<div class="grid">
+    <div>
+        <label>Month</label>
+        <select id="recMonth">
+            <option>Jan-2026</option>
+            <option>Dec-2025</option>
+            <option>Nov-2025</option>
+        </select>
+    </div>
+    <div>
+        <label>Department</label>
+        <select id="recDept">
+            <option>All</option>
+            <option>Electrical</option>
+            <option>Electronics</option>
+            <option>Fitter</option>
+        </select>
+    </div>
+</div>
+
+<button style="margin-top:10px" onclick="downloadRecoveryStatement()">
+⬇ Download Recovery Statement (Excel)
+</button>
+
+<div class="note">
+Includes CD, Share, Loan EMI & Interest – department wise.
+</div>
+</div>
+
+<!-- ================= RECOVERY SLIPS ================= -->
+<div class="card">
+<h3>Recovery Slips (Member-wise)</h3>
+
+<div class="grid">
+    <div>
+        <label>Month</label>
+        <select id="slipMonth">
+            <option>Jan-2026</option>
+            <option>Dec-2025</option>
+        </select>
+    </div>
+    <div>
+        <label>Member No</label>
+        <input id="slipMember" placeholder="Leave blank = All">
+    </div>
+</div>
+
+<button style="margin-top:10px" onclick="downloadRecoverySlips()">
+⬇ Download Recovery Slips (Excel)
+</button>
+
+<div class="note">
+One row per member – ready for cutting / distribution.
+</div>
+</div>
+
+<!-- ================= EMPLOYEE LIST ================= -->
+<div class="card">
+<h3>Employee List</h3>
+
+<div class="grid">
+    <div>
+        <label>Status</label>
+        <select id="empStatus">
+            <option>Active</option>
+            <option>Inactive</option>
+            <option>All</option>
+        </select>
+    </div>
+    <div>
+        <label>Department</label>
+        <select id="empDept">
+            <option>All</option>
+            <option>Electrical</option>
+            <option>Electronics</option>
+            <option>Fitter</option>
+        </select>
+    </div>
+</div>
+
+<button style="margin-top:10px" onclick="downloadEmployeeList()">
+⬇ Download Employee List (Excel)
+</button>
+
+<div class="note">
+Member master data – audit & AGM use.
+</div>
+</div>
+
+<div style="text-align:center;font-size:12px;color:#555;margin-top:20px">
+© Society Management System | Excel Reports Module
+</div>
+
+</main>
+</div>
+
+<!-- ================= JS ================= -->
+<script>
+/* ---------- CSV DOWNLOAD HELPER ---------- */
+function downloadCSV(filename, rows){
+    let csvContent = rows.map(e => e.join(",")).join("\n");
+    let blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+}
+
+/* ---------- RECOVERY STATEMENT ---------- */
+function downloadRecoveryStatement(){
+    let rows = [
+        ["Member No","Name","Dept","CD","Share","Loan EMI","Interest","Total"],
+        ["101","R Patil","Electrical","2000","1000","10000","2400","15400"],
+        ["102","S More","Electrical","2000","1000","8000","1800","12800"]
+    ];
+    downloadCSV("Recovery_Statement.csv", rows);
+}
+
+/* ---------- RECOVERY SLIPS ---------- */
+function downloadRecoverySlips(){
+    let rows = [
+        ["Member No","Name","Month","CD","Share","Loan EMI","Interest","Net Recovery"],
+        ["101","R Patil","Jan-2026","2000","1000","10000","2400","15400"]
+    ];
+    downloadCSV("Recovery_Slips.csv", rows);
+}
+
+/* ---------- EMPLOYEE LIST ---------- */
+function downloadEmployeeList(){
+    let rows = [
+        ["Member No","Name","Department","Designation","Status"],
+        ["101","R Patil","Electrical","SK","Active"],
+        ["102","S More","Electrical","HSK","Active"]
+    ];
+    downloadCSV("Employee_List.csv", rows);
+}
+</script>
+
+</body>
+</html>
