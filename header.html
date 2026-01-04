@@ -1,0 +1,73 @@
+<!-- ================= HEADER START ================= -->
+<style>
+/* BASIC HEADER – minimal CSS (can enhance later) */
+#society-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1e3a8a;
+    color: white;
+    padding: 10px 20px;
+}
+
+/* LEFT SIDE */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-left img {
+    height: 40px;
+}
+
+.header-left .society-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* RIGHT MENU */
+.header-menu a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 14px;
+}
+
+.header-menu a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<header id="society-header">
+
+    <!-- LEFT: LOGO + NAME -->
+    <div class="header-left">
+        <!-- replace src later -->
+        <img src="logo.png" alt="Society Logo">
+        <div class="society-name">
+            The NAD Employees Co-operative Credit Society Ltd, Karanja
+        </div>
+    </div>
+
+    <!-- RIGHT: MENU -->
+    <nav class="header-menu">
+        <a href="index.html">Dashboard</a>
+        <a href="newmember.html">Add Member</a>
+        <a href="member.html">Members</a>
+        <a href="report.html">Reports</a>
+        <a href="Admin.html">Admin</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </nav>
+
+</header>
+
+<script>
+/* BASIC LOGOUT – real logic later */
+function logout() {
+    // clear login session (later backend)
+    sessionStorage.clear();
+    window.location.href = "index.html";
+}
+</script>
+<!-- ================= HEADER END ================= -->
