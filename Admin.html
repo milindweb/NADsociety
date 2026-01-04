@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+    --primary:#1e3a8a;
+    --secondary:#2563eb;
+    --bg:#f3f4f6;
+    --card:#ffffff;
+    --text:#111827;
+    --danger:#dc2626;
+}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text)}
+
+.hidden{display:none}
+
+/* ---------- LAYOUT ---------- */
+.app{display:flex;height:100vh}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+    width:260px;
+    background:var(--primary);
+    color:#fff;
+    padding:15px;
+}
+.sidebar h2{
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.3);
+    padding-bottom:10px;
+}
+.menu a{
+    display:block;
+    padding:10px;
+    color:#fff;
+    text-decoration:none;
+    border-radius:6px;
+    margin-bottom:6px;
+}
+.menu a:hover,.menu a.active{background:var(--secondary)}
+
+/* ---------- MAIN ---------- */
+.main{flex:1;padding:20px;overflow-y:auto}
+.header{font-size:22px;font-weight:bold;margin-bottom:15px}
+
+/* ---------- CARD ---------- */
+.card{
+    background:var(--card);
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+.card h3{margin-top:0;color:var(--secondary)}
+
+/* ---------- FORM ---------- */
+input,select,button{
+    padding:8px;
+    margin-top:5px;
+    width:100%;
+}
+button{
+    background:var(--secondary);
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+button:hover{opacity:.9}
+
+button.danger{background:var(--danger)}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+
+/* ---------- TABLE ---------- */
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+th,td{
+    border:1px solid #ddd;
+    padding:8px;
+    font-size:13px;
+}
+th{background:#e5e7eb}
+tr:nth-child(even){background:#f9fafb}
+
+/* ---------- LOGIN ---------- */
+.login-box{
+    max-width:380px;
+    margin:80px auto;
+}
+.login-box h2{text-align:center}
+
+.footer{
+    text-align:center;
+    font-size:12px;
+    color:#555;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN SCREEN ================= -->
+<div id="loginScreen" class="login-box card">
+    <h2>Admin Login</h2>
+
+    <label>Username</label>
+    <input type="text" id="username">
+
+    <label>Password</label>
+    <input type="password" id="password">
+
+    <label>Role</label>
+    <select id="role">
+        <option value="admin">Admin</option>
+        <option value="operator">Operator</option>
+        <option value="viewer">Viewer</option>
+    </select>
+
+    <button onclick="login()">Login</button>
+
+    <p style="font-size:12px;color:#666;margin-top:10px">
+        ⚠ For security, backend validation will be enforced via Python.
+    </p>
+</div>
+
+<!-- ================= ADMIN PANEL ================= -->
+<div id="adminPanel" class="hidden">
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <h2>Admin Panel</h2>
+    <nav class="menu">
+        <a href="index.html">🏠 Home</a>
+        <a href="Admin.html" class="active">⚙️ Admin</a>
+        <a href="#" onclick="showSection('users')">👥 Users</a>
+        <a href="#" onclick="showSection('rates')">📈 Interest Rates</a>
+        <a href="#" onclick="showSection('system')">🗄 System</a>
+        <a href="#" onclick="logout()">🚪 Logout</a>
+    </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+<div class="header">Administration</div>
+
+<!-- USERS -->
+<div id="users" class="card">
+<h3>User Management</h3>
+<div class="grid">
+    <div>
+        <label>Username</label>
+        <input id="newUser">
+    </div>
+    <div>
+        <label>Password</label>
+        <input id="newPass">
+    </div>
+    <div>
+        <label>Role</label>
+        <select id="newRole">
+            <option>admin</option>
+            <option>operator</option>
+            <option>viewer</option>
+        </select>
+    </div>
+</div>
+<button style="margin-top:10px">Add User</button>
+
+<table>
+<tr>
+<th>User</th><th>Role</th><th>Status</th><th>Action</th>
+</tr>
+<tr>
+<td>admin</td><td>Admin</td><td>Active</td>
+<td><button class="danger">Disable</button></td>
+</tr>
+</table>
+</div>
+
+<!-- RATES -->
+<div id="rates" class="card hidden">
+<h3>AGM Controlled Rates</h3>
+<div class="grid">
+    <div>
+        <label>Loan Interest %</label>
+        <input value="10.5">
+    </div>
+    <div>
+        <label>CD Interest %</label>
+        <input value="5.0">
+    </div>
+    <div>
+        <label>Dividend %</label>
+        <input value="8.0">
+    </div>
+    <div>
+        <label>FD Interest %</label>
+        <input value="7.5">
+    </div>
+</div>
+<button style="margin-top:10px">Save Rates</button>
+
+<p style="font-size:12px;color:#555;margin-top:10px">
+⚠ Rates change only after AGM approval.
+</p>
+</div>
+
+<!-- SYSTEM -->
+<div id="system" class="card hidden">
+<h3>System Controls</h3>
+
+<button>📦 Backup Now</button>
+<button style="margin-top:8px">♻ Restore Backup</button>
+<button style="margin-top:8px">📄 View Audit Log</button>
+
+<p style="font-size:12px;color:#555;margin-top:10px">
+✔ No delete policy<br>
+✔ All actions logged<br>
+✔ Monthly / Yearly backups supported
+</p>
+</div>
+
+<div class="footer">
+© Society Management System | Admin Module
+</div>
+
+</main>
+</div>
+</div>
+
+<script>
+function login(){
+    if(!username.value || !password.value){
+        alert("Enter username & password");
+        return;
+    }
+    loginScreen.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+}
+
+function logout(){
+    location.reload();
+}
+
+function showSection(id){
+    ["users","rates","system"].forEach(s=>{
+        document.getElementById(s).classList.add("hidden");
+    });
+    document.getElementById(id).classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
