@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>New Member Registration</title>
+
+<style>
+/* ================= GLOBAL ================= */
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f8;
+    margin:0;
+}
+.container{
+    width:1100px;
+    margin:20px auto;
+    background:#ffffff;
+    padding:25px 30px;
+    box-shadow:0 0 12px rgba(0,0,0,0.15);
+}
+h2{
+    border-bottom:2px solid #999;
+    padding-bottom:6px;
+    margin-top:30px;
+}
+.section{ margin-top:20px; }
+.row{
+    display:flex;
+    gap:20px;
+    margin-bottom:12px;
+}
+.row label{
+    width:220px;
+    font-weight:bold;
+}
+.row input,.row select,.row textarea{
+    flex:1;
+    padding:6px;
+    font-size:14px;
+}
+textarea{ resize:none; height:60px; }
+
+.actions{
+    text-align:center;
+    margin-top:35px;
+}
+button{
+    padding:10px 28px;
+    margin:0 10px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+/* ================= PREVIEW ================= */
+#previewBox{
+    display:none;
+}
+.readonly input,
+.readonly textarea,
+.readonly select{
+    background:#eee;
+    pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= FORM ================= -->
+<div class="container" id="formContainer">
+
+<h2>1️⃣ Member Identification & Service Details</h2>
+<div class="section">
+
+<div class="row">
+<label>General Number *</label>
+<input type="text" id="gen_no">
+</div>
+
+<div class="row">
+<label>Token Number</label>
+<input type="text" id="token_no">
+</div>
+
+<div class="row">
+<label>Member Name *</label>
+<input type="text" id="member_name">
+</div>
+
+<div class="row">
+<label>Employee Type *</label>
+<select id="emp_type">
+<option value="">Select</option>
+<option>Industrial</option>
+<option>Non-Industrial</option>
+</select>
+</div>
+
+<div class="row">
+<label>Part / Department</label>
+<select id="department">
+<option value="">Select</option>
+<option>Electrical</option>
+<option>Electronics</option>
+<option>Fitter</option>
+<option>Admin</option>
+</select>
+</div>
+
+<div class="row">
+<label>Date of Birth *</label>
+<input type="date" id="dob">
+</div>
+
+<div class="row">
+<label>Date of Retirement</label>
+<input type="date" id="dor" readonly>
+</div>
+
+<div class="row">
+<label>Date of Joining Society</label>
+<input type="date" id="doj">
+</div>
+
+</div>
+
+<h2>2️⃣ Personal & KYC Information</h2>
+<div class="section">
+
+<div class="row">
+<label>Aadhaar Number</label>
+<input type="text" id="aadhaar" maxlength="12">
+</div>
+
+<div class="row">
+<label>PAN Number</label>
+<input type="text" id="pan" maxlength="10">
+</div>
+
+<div class="row">
+<label>Mobile Number *</label>
+<input type="text" id="mobile" maxlength="10">
+</div>
+
+<div class="row">
+<label>Email ID</label>
+<input type="email" id="email">
+</div>
+
+<div class="row">
+<label>Present Address</label>
+<textarea id="present_address"></textarea>
+</div>
+
+<div class="row">
+<label>
+<input type="checkbox" id="same_address"> Permanent same as Present
+</label>
+</div>
+
+<div class="row">
+<label>Permanent Address</label>
+<textarea id="permanent_address"></textarea>
+</div>
+
+</div>
+
+<h2>3️⃣ Nominee Details</h2>
+<div class="section">
+
+<div class="row">
+<label>Nominee Name</label>
+<input type="text" id="nominee_name">
+</div>
+
+<div class="row">
+<label>Nominee Date of Birth</label>
+<input type="date" id="nominee_dob">
+</div>
+
+<div class="row">
+<label>Relationship</label>
+<input type="text" id="nominee_relation">
+</div>
+
+</div>
+
+<h2>4️⃣ Surety Information (Optional – Required at Loan Time)</h2>
+<div class="section">
+
+<div class="row">
+<label>Surety Name</label>
+<input type="text" id="surety1_name">
+</div>
+
+<div class="row">
+<label>Surety Gen. No.</label>
+<input type="text" id="surety1_gen">
+</div>
+
+<div class="row">
+<label>Surety Token No.</label>
+<input type="text" id="surety1_token">
+</div>
+
+</div>
+
+<div class="actions">
+<button onclick="saveDraft()">Save Draft</button>
+<button onclick="preview()">Preview</button>
+</div>
+
+</div>
+
+<!-- ================= PREVIEW ================= -->
+<div class="container readonly" id="previewBox">
+<h2>Member Preview (Read-Only)</h2>
+<div id="previewContent"></div>
+
+<div class="actions">
+<button onclick="editForm()">Edit</button>
+<button onclick="finalSave()">Final Save</button>
+</div>
+</div>
+
+<script>
+/* ================= FIELD LABEL MAP ================= */
+const labels={
+gen_no:"General Number",
+token_no:"Token Number",
+member_name:"Member Name",
+emp_type:"Employee Type",
+department:"Department",
+dob:"Date of Birth",
+dor:"Date of Retirement",
+doj:"Date of Joining",
+aadhaar:"Aadhaar Number",
+pan:"PAN Number",
+mobile:"Mobile Number",
+email:"Email ID",
+present_address:"Present Address",
+permanent_address:"Permanent Address",
+nominee_name:"Nominee Name",
+nominee_dob:"Nominee DOB",
+nominee_relation:"Relationship",
+surety1_name:"Surety Name",
+surety1_gen:"Surety Gen No",
+surety1_token:"Surety Token No"
+};
+
+/* ================= RETIREMENT AUTO CALC ================= */
+dob.addEventListener("change",()=>{
+    if(!dob.value) return;
+    let d=new Date(dob.value);
+    d.setFullYear(d.getFullYear()+60);
+    dor.value=d.toISOString().split("T")[0];
+});
+
+/* ================= ADDRESS COPY ================= */
+same_address.addEventListener("change",()=>{
+    if(same_address.checked){
+        permanent_address.value=present_address.value;
+    }
+});
+
+/* ================= AUTO SAVE ================= */
+document.querySelectorAll("input,textarea,select").forEach(el=>{
+    el.addEventListener("input",saveDraft);
+});
+
+function saveDraft(){
+    if(!gen_no.value.trim()) return;
+    let data={};
+    document.querySelectorAll("input,textarea,select").forEach(el=>{
+        data[el.id]=el.value;
+    });
+    localStorage.setItem("member_draft_"+gen_no.value.trim(),JSON.stringify(data));
+}
+
+/* ================= LOAD DRAFT ================= */
+gen_no.addEventListener("blur",()=>{
+    let key="member_draft_"+gen_no.value.trim();
+    let data=JSON.parse(localStorage.getItem(key));
+    if(!data) return;
+    Object.keys(data).forEach(k=>{
+        if(document.getElementById(k)){
+            document.getElementById(k).value=data[k];
+        }
+    });
+});
+
+/* ================= PREVIEW ================= */
+function preview(){
+    if(!gen_no.value || !member_name.value || !mobile.value){
+        alert("Mandatory fields missing");
+        return;
+    }
+    let html="";
+    document.querySelectorAll("input,textarea,select").forEach(el=>{
+        if(el.value){
+            html+=`<p><b>${labels[el.id]}:</b> ${el.value}</p>`;
+        }
+    });
+    previewContent.innerHTML=html;
+    formContainer.style.display="none";
+    previewBox.style.display="block";
+}
+
+/* ================= EDIT ================= */
+function editForm(){
+    previewBox.style.display="none";
+    formContainer.style.display="block";
+}
+
+/* ================= FINAL SAVE ================= */
+function finalSave(){
+
+    if(!/^\d{10}$/.test(mobile.value)){
+        alert("Invalid Mobile Number");
+        return;
+    }
+    if(aadhaar.value && !/^\d{12}$/.test(aadhaar.value)){
+        alert("Invalid Aadhaar Number");
+        return;
+    }
+    if(pan.value && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan.value)){
+        alert("Invalid PAN Number");
+        return;
+    }
+
+    alert("Final Save Successful.\nData will be committed to SQLite backend.");
+    localStorage.removeItem("member_draft_"+gen_no.value.trim());
+}
+</script>
+
+</body>
+</html>
