@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Member Profile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+    --primary:#1e3a8a;
+    --secondary:#2563eb;
+    --bg:#f3f4f6;
+    --card:#ffffff;
+    --text:#111827;
+}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
+body{margin:0;background:var(--bg);color:var(--text);}
+
+.app{display:flex;height:100vh}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+    width:260px;
+    background:var(--primary);
+    color:#fff;
+    padding:15px;
+}
+.sidebar h2{
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.3);
+    padding-bottom:10px;
+}
+.menu a{
+    display:block;
+    padding:10px;
+    color:#fff;
+    text-decoration:none;
+    border-radius:6px;
+    margin-bottom:6px;
+}
+.menu a:hover,.menu a.active{background:var(--secondary);}
+
+/* ---------- MAIN ---------- */
+.main{flex:1;padding:20px;overflow-y:auto}
+.header{font-size:22px;font-weight:bold;margin-bottom:15px}
+
+/* ---------- CARD ---------- */
+.card{
+    background:var(--card);
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+.card h3{margin-top:0;color:var(--secondary)}
+
+/* ---------- GRID ---------- */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+
+/* ---------- TABLE ---------- */
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+th,td{
+    border:1px solid #ddd;
+    padding:8px;
+    font-size:13px;
+}
+th{
+    background:#e5e7eb;
+}
+tr:nth-child(even){background:#f9fafb}
+
+/* ---------- SECTION TITLE ---------- */
+.section-title{
+    font-size:18px;
+    font-weight:bold;
+    margin:30px 0 10px;
+    color:#1f2937;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<!-- ========== SIDEBAR ========== -->
+<aside class="sidebar">
+    <h2>Society System</h2>
+    <nav class="menu">
+        <a href="index.html">🏠 Home</a>
+        <a href="member.html" class="active">👤 Member Profile</a>
+        <a href="Report.htm">📊 Reports</a>
+        <a href="Admin.html">⚙️ Admin</a>
+    </nav>
+</aside>
+
+<!-- ========== MAIN ========== -->
+<main class="main">
+
+<div class="header">Member Profile</div>
+
+<!-- MEMBER BASIC INFO -->
+<div class="card">
+<h3>Basic Information</h3>
+<div class="grid">
+    <div><b>Member No:</b> <span id="m_no">101</span></div>
+    <div><b>Name:</b> <span id="m_name">R. Patil</span></div>
+    <div><b>Department:</b> Electrical</div>
+    <div><b>Designation:</b> SK</div>
+    <div><b>Status:</b> Active</div>
+    <div><b>Joining Date:</b> 12-03-2015</div>
+</div>
+</div>
+
+<!-- BALANCE SUMMARY -->
+<div class="card">
+<h3>Balance Summary</h3>
+<div class="grid">
+    <div><b>CD Balance</b><br>₹ 1,25,000</div>
+    <div><b>Share Balance</b><br>₹ 45,000</div>
+    <div><b>Loan Outstanding</b><br>₹ 2,40,000</div>
+    <div><b>FD Total</b><br>₹ 3,00,000</div>
+</div>
+</div>
+
+<!-- LOAN HISTORY -->
+<div class="card">
+<h3>Loan Details</h3>
+<table>
+<tr>
+<th>Loan No</th>
+<th>Type</th>
+<th>Sanction</th>
+<th>EMI</th>
+<th>Interest</th>
+<th>Outstanding</th>
+<th>Status</th>
+</tr>
+<tr>
+<td>LL125</td>
+<td>LTL</td>
+<td>3,00,000</td>
+<td>10,000</td>
+<td>2,400</td>
+<td>2,40,000</td>
+<td>Active</td>
+</tr>
+</table>
+</div>
+
+<!-- CD & SHARE TRANSACTIONS -->
+<div class="card">
+<h3>CD / Share Transaction History (Latest First)</h3>
+<table>
+<tr>
+<th>Month</th>
+<th>CD Amount</th>
+<th>CD Balance</th>
+<th>Share Amount</th>
+<th>Share Balance</th>
+</tr>
+<tr>
+<td>Dec-2025</td>
+<td>2,000</td>
+<td>1,25,000</td>
+<td>1,000</td>
+<td>45,000</td>
+</tr>
+<tr>
+<td>Nov-2025</td>
+<td>2,000</td>
+<td>1,23,000</td>
+<td>1,000</td>
+<td>44,000</td>
+</tr>
+</table>
+</div>
+
+<!-- ================= FD SECTION (SEPARATE & BELOW ALL) ================= -->
+<div class="section-title">Fixed Deposit (FD) Details</div>
+
+<div class="card">
+<table>
+<tr>
+<th>FD No</th>
+<th>Amount</th>
+<th>Start Date</th>
+<th>Tenure (Months)</th>
+<th>Interest %</th>
+<th>Maturity Amount</th>
+<th>Status</th>
+</tr>
+<tr>
+<td>FD001</td>
+<td>1,00,000</td>
+<td>01-01-2024</td>
+<td>24</td>
+<td>7.5%</td>
+<td>1,16,000</td>
+<td>Active</td>
+</tr>
+<tr>
+<td>FD002</td>
+<td>2,00,000</td>
+<td>01-07-2023</td>
+<td>36</td>
+<td>8.0%</td>
+<td>2,52,000</td>
+<td>Active</td>
+</tr>
+</table>
+</div>
+
+<div style="text-align:center;font-size:12px;color:#555;margin-top:20px;">
+© Society Management System | Member Ledger View
+</div>
+
+</main>
+</div>
+
+<!-- JS -->
+<script>
+function getParam(name){
+    return new URLSearchParams(window.location.search).get(name);
+}
+const memberId=getParam("member_id");
+if(memberId){
+    document.getElementById("m_no").innerText=memberId;
+}
+</script>
+
+</body>
+</html>
