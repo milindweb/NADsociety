@@ -1,6 +1,6 @@
 <!-- ================= HEADER START ================= -->
 <style>
-/* BASIC HEADER – minimal CSS (can enhance later) */
+/* BASIC HEADER – minimal CSS (enhance later) */
 #society-header {
     display: flex;
     align-items: center;
@@ -15,6 +15,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    cursor: pointer;
 }
 
 .header-left img {
@@ -41,9 +42,8 @@
 
 <header id="society-header">
 
-    <!-- LEFT: LOGO + NAME -->
-    <div class="header-left">
-        <!-- replace src later -->
+    <!-- LEFT: LOGO + NAME (DASHBOARD LINK) -->
+    <div class="header-left" onclick="goDashboard()">
         <img src="logo.png" alt="Society Logo">
         <div class="society-name">
             The NAD Employees Co-operative Credit Society Ltd, Karanja
@@ -52,23 +52,37 @@
 
     <!-- RIGHT: MENU -->
     <nav class="header-menu">
-        <a href="index.html">Dashboard</a>
         <a href="newmember.html">Add Member</a>
         <a href="transactions.html">Transaction</a>
         <a href="member.html">Members</a>
         <a href="report.html">Reports</a>
-        <a href="Admin.html">Admin</a>
+        <a href="Admin.html" id="adminLink" style="display:none;">Admin</a>
         <a href="#" onclick="logout()">Logout</a>
     </nav>
 
 </header>
 
 <script>
-/* BASIC LOGOUT – real logic later */
-function logout() {
-    // clear login session (later backend)
-    sessionStorage.clear();
+/* ================= DASHBOARD NAV ================= */
+function goDashboard(){
     window.location.href = "index.html";
+}
+
+/* ================= ROLE BASED MENU =================
+   role should be set at login:
+   sessionStorage.setItem("user_role","admin|clerk|viewer")
+================================================== */
+(function(){
+    const role = sessionStorage.getItem("user_role");
+    if(role === "admin"){
+        document.getElementById("adminLink").style.display = "inline";
+    }
+})();
+
+/* ================= LOGOUT ================= */
+function logout(){
+    sessionStorage.clear();
+    window.location.href = "login.html";
 }
 </script>
 <!-- ================= HEADER END ================= -->
