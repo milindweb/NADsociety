@@ -15,7 +15,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
 }
 
 .header-left img {
@@ -43,12 +44,12 @@
 <header id="society-header">
 
     <!-- LEFT: LOGO + NAME (DASHBOARD LINK) -->
-    <div class="header-left" onclick="goDashboard()">
+    <a href="index.html" class="header-left">
         <img src="logo.png" alt="Society Logo">
         <div class="society-name">
             The NAD Employees Co-operative Credit Society Ltd, Karanja
         </div>
-    </div>
+    </a>
 
     <!-- RIGHT: MENU -->
     <nav class="header-menu">
@@ -57,32 +58,42 @@
         <a href="member.html">Members</a>
         <a href="report.html">Reports</a>
         <a href="Admin.html" id="adminLink" style="display:none;">Admin</a>
-        <a href="#" onclick="logout()">Logout</a>
+        <a href="#" id="logoutLink">Logout</a>
     </nav>
 
 </header>
 
 <script>
-/* ================= DASHBOARD NAV ================= */
-function goDashboard(){
-    window.location.href = "index.html";
-}
-
-/* ================= ROLE BASED MENU =================
-   role should be set at login:
-   sessionStorage.setItem("user_role","admin|clerk|viewer")
-================================================== */
+/* =====================================================
+   ROLE-BASED MENU VISIBILITY
+   role is set ONLY in login.html
+===================================================== */
 (function(){
-    const role = sessionStorage.getItem("user_role");
-    if(role === "admin"){
-        document.getElementById("adminLink").style.display = "inline";
+    try{
+        const role = sessionStorage.getItem("user_role");
+        const adminLink = document.getElementById("adminLink");
+
+        if(role === "admin" && adminLink){
+            adminLink.style.display = "inline";
+        }
+    }catch(e){
+        // silent fail – header must never break UI
     }
 })();
 
-/* ================= LOGOUT ================= */
-function logout(){
-    sessionStorage.clear();
-    window.location.href = "login.html";
-}
+/* =====================================================
+   LOGOUT – STRICT, RELIABLE
+===================================================== */
+document.getElementById("logoutLink").addEventListener("click", function(e){
+    e.preventDefault();
+
+    // remove only known keys (safe, predictable)
+    sessionStorage.removeItem("loggedIn");
+    sessionStorage.removeItem("user_role");
+    sessionStorage.removeItem("active_member_id");
+
+    // hard redirect to login (no back navigation issues)
+    window.location.replace("login.html");
+});
 </script>
 <!-- ================= HEADER END ================= -->
