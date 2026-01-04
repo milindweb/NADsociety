@@ -2,334 +2,248 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Loan & Recovery Entry</title>
+<title>Transactions</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background:#f4f6f8;
     margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f3f4f6;
 }
+
 .container{
-    width:1200px;
-    margin:20px auto;
+    padding:10px 15px;
+}
+
+.section{
     background:#fff;
-    padding:25px;
-    box-shadow:0 0 12px rgba(0,0,0,0.15);
-}
-h2,h3{
-    border-bottom:2px solid #999;
-    padding-bottom:6px;
-    margin-top:25px;
-}
-.row{
-    display:flex;
-    gap:20px;
+    border:1px solid #ccc;
+    padding:10px;
     margin-bottom:10px;
 }
-.row label{
-    width:240px;
-    font-weight:bold;
-}
-.row input,.row select,.row textarea{
-    flex:1;
-    padding:6px;
-}
-textarea{ resize:none; height:60px; }
 
-fieldset{
+.section-title{
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+    gap:8px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    font-size:13px;
+}
+
+input, select{
+    padding:5px;
+    font-size:13px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+th, td{
     border:1px solid #ccc;
-    padding:15px;
-    margin-top:20px;
-}
-legend{
-    font-weight:bold;
+    padding:5px;
+    text-align:center;
 }
 
-.actions{
-    text-align:center;
-    margin-top:30px;
+th{
+    background:#e5e7eb;
 }
+
 button{
-    padding:10px 30px;
-    font-size:16px;
-    margin:0 10px;
+    padding:6px 12px;
+    font-size:13px;
     cursor:pointer;
 }
-.disabled{
-    background:#eee;
-    pointer-events:none;
-}
 
-.info-box{
-    background:#eef2f6;
-    padding:10px;
-    margin-top:10px;
-    border-left:4px solid #333;
-    font-size:14px;
-}
-
-.readonly{
-    background:#eee;
+.two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- ================= LOGIN CHECK ================= -->
+<script>
+if(sessionStorage.getItem("loggedIn") !== "true"){
+    window.location.href = "login.html";
+}
+</script>
+
+<!-- ================= HEADER ================= -->
+<div id="header"></div>
+
+<!-- ================= PAGE CONTENT ================= -->
 <div class="container">
 
-<h2>🏦 Loan & Recovery Entry Form</h2>
-<p><b>The NAD Employees Co-operative Credit Society Ltd., Karanja</b></p>
+    <!-- ================= MEMBER IDENTIFICATION ================= -->
+    <div class="section">
+        <div class="section-title">Member Identification</div>
 
-<!-- ================= A. MEMBER SEARCH ================= -->
-<h3>A. Member Search & Selection</h3>
+        <!-- SYSTEM MEMBER ID (HIDDEN) -->
+        <input type="hidden" id="member_id">
 
-<div class="row">
-<label>Search Member</label>
-<input type="text" id="member_search" placeholder="Gen No / Token No / Name">
-</div>
+        <div class="form-grid">
+            <div class="form-group">
+                General No
+                <input type="text" id="gen_no">
+            </div>
 
-<button onclick="selectMember()">Select Member</button>
+            <div class="form-group">
+                Name
+                <input type="text" id="member_name" readonly>
+            </div>
 
-<div id="memberInfo" class="info-box hidden">
-<b>Selected Member:</b><br>
-Name: <span id="m_name"></span> |
-Gen No: <span id="m_gen"></span> |
-Token No: <span id="m_token"></span><br>
-Dept: <span id="m_dept"></span> |
-Loan Status: <span id="m_loan"></span><br>
-<a href="member.html" target="_blank">🔎 View Member Profile</a>
-</div>
+            <div class="form-group">
+                Department
+                <input type="text" id="department" readonly>
+            </div>
 
-<!-- ================= TRANSACTION FORM ================= -->
-<div id="txnForm" class="disabled">
+            <div class="form-group">
+                Designation
+                <input type="text" id="designation" readonly>
+            </div>
+        </div>
+    </div>
 
-<!-- ================= B. HEADER ================= -->
-<h3>B. Transaction Header</h3>
+    <!-- ================= CONTRIBUTIONS ================= -->
+    <div class="section">
+        <div class="section-title">Monthly Contributions</div>
 
-<div class="row">
-<label>Month & Year</label>
-<input type="month" id="month_year">
-</div>
+        <div class="form-grid">
+            <div class="form-group">
+                CD Amount
+                <input type="number">
+            </div>
 
-<div class="row">
-<label>Posting Date</label>
-<input type="date" id="posting_date">
-</div>
+            <div class="form-group">
+                Share Amount
+                <input type="number">
+            </div>
+        </div>
+    </div>
 
-<div class="row">
-<label>Voucher Number</label>
-<input type="text" id="voucher_no">
-</div>
+    <!-- ================= LOANS SIDE BY SIDE ================= -->
+    <div class="two-col">
 
-<div class="row">
-<label>Cash Receipt Number</label>
-<input type="text" id="receipt_no">
-</div>
+        <!-- SHORT LOAN -->
+        <div class="section">
+            <div class="section-title">Short Loan</div>
 
-<!-- ================= C. DEPOSITS ================= -->
-<fieldset>
-<legend>C. Deposits</legend>
+            <div class="form-grid">
+                <div class="form-group">
+                    Loan No
+                    <input type="text">
+                </div>
 
-<div class="row">
-<label>Compulsory Deposit (±)</label>
-<input type="number" id="cd_amount">
-</div>
+                <div class="form-group">
+                    Installment
+                    <input type="number">
+                </div>
 
-<div class="row">
-<label>Share Contribution (±)</label>
-<input type="number" id="share_amount">
-</div>
-</fieldset>
+                <div class="form-group">
+                    Interest
+                    <input type="number">
+                </div>
 
-<!-- ================= D. LTL ================= -->
-<fieldset>
-<legend>D. Long Term Loan (LTL)</legend>
+                <div class="form-group">
+                    Balance
+                    <input type="number" readonly>
+                </div>
+            </div>
+        </div>
 
-<div class="row">
-<label>Loan Sanction / Adjustment (±)</label>
-<input type="number" id="ltl_loan_adj">
-</div>
+        <!-- LONG LOAN -->
+        <div class="section">
+            <div class="section-title">Long Loan</div>
 
-<div class="row">
-<label>System Suggested EMI</label>
-<input type="number" id="ltl_sys_emi" class="readonly" readonly value="5000">
-</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    Loan No
+                    <input type="text">
+                </div>
 
-<div class="row">
-<label>Manual EMI (Override)</label>
-<input type="number" id="ltl_manual_emi">
-</div>
+                <div class="form-group">
+                    Installment
+                    <input type="number">
+                </div>
 
-<div class="row">
-<label>Principal Recovered</label>
-<input type="number" id="ltl_principal">
-</div>
+                <div class="form-group">
+                    Interest
+                    <input type="number">
+                </div>
 
-<div class="row">
-<label>Interest Recovered</label>
-<input type="number" id="ltl_interest">
-</div>
+                <div class="form-group">
+                    Balance
+                    <input type="number" readonly>
+                </div>
+            </div>
+        </div>
 
-<div class="row">
-<label>Recovery Status</label>
-<select id="ltl_status">
-<option value="">Select</option>
-<option>Full Recovery</option>
-<option>Partial Recovery</option>
-<option>No Recovery</option>
-</select>
-</div>
+    </div>
 
-<div class="row">
-<label>LTL Remarks</label>
-<textarea id="ltl_remarks"></textarea>
-</div>
+    <!-- ================= SUMMARY ================= -->
+    <div class="section">
+        <div class="section-title">Transaction Summary</div>
 
-</fieldset>
+        <table>
+            <tr>
+                <th>CD</th>
+                <th>Share</th>
+                <th>Short Loan</th>
+                <th>Long Loan</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
 
-<!-- ================= E. STL ================= -->
-<fieldset>
-<legend>E. Short Term Loan (STL)</legend>
-
-<div class="row">
-<label>Loan Sanction / Adjustment (±)</label>
-<input type="number" id="stl_loan_adj">
-</div>
-
-<div class="row">
-<label>System Suggested EMI</label>
-<input type="number" class="readonly" readonly value="2000">
-</div>
-
-<div class="row">
-<label>Manual EMI</label>
-<input type="number" id="stl_manual_emi">
-</div>
-
-<div class="row">
-<label>Principal Recovered</label>
-<input type="number" id="stl_principal">
-</div>
-
-<div class="row">
-<label>Interest Recovered</label>
-<input type="number" id="stl_interest">
-</div>
-
-<div class="row">
-<label>Recovery Status</label>
-<select id="stl_status">
-<option value="">Select</option>
-<option>Full Recovery</option>
-<option>Partial Recovery</option>
-<option>No Recovery</option>
-</select>
-</div>
-
-<div class="row">
-<label>STL Remarks</label>
-<textarea id="stl_remarks"></textarea>
-</div>
-
-</fieldset>
-
-<!-- ================= F. SURETY ================= -->
-<fieldset>
-<legend>F. Surety Recovery (If Applicable)</legend>
-
-<div class="row">
-<label>Surety-I Recovered</label>
-<input type="number" id="surety1">
-</div>
-
-<div class="row">
-<label>Surety-II Recovered</label>
-<input type="number" id="surety2">
-</div>
-
-</fieldset>
-
-<!-- ================= G. TOTAL ================= -->
-<h3>G. Total Recovery</h3>
-
-<div class="row">
-<label>Total Monthly Recovery</label>
-<input type="number" id="total_recovery" class="readonly" readonly>
-</div>
-
-<div class="actions">
-<button onclick="preview()">Preview</button>
-<button onclick="finalSave()">Final Save</button>
-</div>
+    <!-- ================= ACTION ================= -->
+    <div class="section">
+        <button>Save Transaction</button>
+        <button style="margin-left:5px;">Cancel</button>
+    </div>
 
 </div>
-</div>
 
+<!-- ================= JS ================= -->
 <script>
-/* ================= MEMBER SELECTION ================= */
-function selectMember(){
-    if(!member_search.value.trim()){
-        alert("Search member first");
-        return;
-    }
-    // simulate fetch
-    m_name.textContent="Anil Dongre";
-    m_gen.textContent="2482";
-    m_token.textContent="T145";
-    m_dept.textContent="Electrical";
-    m_loan.textContent="LTL Active";
-    memberInfo.classList.remove("hidden");
-    txnForm.classList.remove("disabled");
-}
-
-/* ================= TOTAL RECOVERY ================= */
-document.querySelectorAll("input").forEach(el=>{
-    el.addEventListener("input",calcTotal);
-});
-
-function calcTotal(){
-    let total=0;
-    ["cd_amount","share_amount","ltl_principal","ltl_interest","stl_principal","stl_interest","surety1","surety2"]
-    .forEach(id=>{
-        let v=parseFloat(document.getElementById(id).value);
-        if(!isNaN(v)) total+=v;
+/* ---------- LOAD HEADER ---------- */
+fetch("header.html")
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById("header").innerHTML = html;
     });
-    total_recovery.value=total;
-}
 
-/* ================= PREVIEW ================= */
-function preview(){
-    if(!month_year.value){
-        alert("Month-Year required");
-        return;
-    }
-    alert("Preview OK.\nVerify all entries before Final Save.");
-}
-
-/* ================= FINAL SAVE ================= */
-function finalSave(){
-
-    if(ltl_manual_emi.value && !ltl_remarks.value){
-        alert("LTL remarks mandatory for Manual EMI");
-        return;
-    }
-    if(["Partial Recovery","No Recovery"].includes(ltl_status.value) && !ltl_remarks.value){
-        alert("LTL remarks mandatory for partial/nil recovery");
-        return;
-    }
-    if(["Partial Recovery","No Recovery"].includes(stl_status.value) && !stl_remarks.value){
-        alert("STL remarks mandatory for partial/nil recovery");
-        return;
-    }
-
-    alert(
-        "Transaction Saved Successfully.\n" +
-        "Duplicate month entry prevented.\n" +
-        "Audit trail recorded."
-    );
-}
+/*
+BACKEND RESPONSIBILITY (Python):
+• Search by gen_no
+• Fetch member_id internally
+• Populate readonly fields
+• Save transaction
+• Write audit trail in /logs
+*/
 </script>
 
 </body>
