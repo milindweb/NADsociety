@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Secure Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ---------- BASE ---------- */
+body{
+    margin:0;
+    height:100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg,#0f172a,#1e3a8a);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* ---------- LOGIN BOX ---------- */
+.login-box{
+    width:380px;
+    background:#ffffff;
+    padding:30px;
+    border-radius:8px;
+    box-shadow:0 15px 40px rgba(0,0,0,.35);
+    animation: slideIn .6s ease;
+}
+
+@keyframes slideIn{
+    from{opacity:0; transform:translateY(30px)}
+    to{opacity:1; transform:translateY(0)}
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#1e3a8a;
+}
+
+/* ---------- FORM ---------- */
+label{
+    font-size:13px;
+    margin-top:10px;
+    display:block;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    border:1px solid #ccc;
+    border-radius:4px;
+    font-size:14px;
+}
+
+input:focus{
+    outline:none;
+    border-color:#1e3a8a;
+}
+
+/* ---------- PASSWORD TOGGLE ---------- */
+.password-box{
+    position:relative;
+}
+.toggle{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:12px;
+    color:#1e3a8a;
+}
+
+/* ---------- BUTTON ---------- */
+button{
+    width:100%;
+    padding:10px;
+    margin-top:20px;
+    background:#1e3a8a;
+    color:white;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:15px;
+}
+button:hover{opacity:.9}
+button:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+/* ---------- STATUS ---------- */
+.status{
+    margin-top:15px;
+    font-size:13px;
+    text-align:center;
+    min-height:18px;
+}
+.error{color:#dc2626}
+.info{color:#1e3a8a}
+
+/* ---------- FOOTER ---------- */
+.footer{
+    text-align:center;
+    font-size:11px;
+    margin-top:20px;
+    color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+    <h2>Secure Login</h2>
+
+    <label>Username</label>
+    <input type="text" id="username" autocomplete="off">
+
+    <label>Password</label>
+    <div class="password-box">
+        <input type="password" id="password">
+        <span class="toggle" onclick="togglePassword()">Show</span>
+    </div>
+
+    <button id="loginBtn" onclick="login()">Login</button>
+
+    <div id="status" class="status"></div>
+
+    <div class="footer">
+        Authorized Access Only
+    </div>
+</div>
+
+<script>
+/* ---------- SESSION CHECK ---------- */
+if(sessionStorage.getItem("loggedIn")==="true"){
+    window.location.href="index.html";
+}
+
+/* ---------- PASSWORD TOGGLE ---------- */
+function togglePassword(){
+    let p = document.getElementById("password");
+    p.type = p.type === "password" ? "text" : "password";
+}
+
+/* ---------- ENTER KEY ---------- */
+document.addEventListener("keydown",function(e){
+    if(e.key==="Enter") login();
+});
+
+/* ---------- BASIC ATTEMPT CONTROL (FRONTEND) ---------- */
+let attempts = 0;
+let lockUntil = 0;
+
+function login(){
+    let now = Date.now();
+    if(now < lockUntil){
+        showStatus("Too many attempts. Wait a moment.","error");
+        return;
+    }
+
+    let u = username.value.trim();
+    let p = password.value.trim();
+
+    if(!u || !p){
+        showStatus("Username and password required.","error");
+        return;
+    }
+
+    /* BACKEND AUTH WILL REPLACE THIS */
+    authenticate(u,p);
+}
+
+/* ---------- PLACEHOLDER AUTH ---------- */
+function authenticate(u,p){
+    attempts++;
+    showStatus("Authenticating...","info");
+
+    setTimeout(()=>{
+        /* TEMP: always success */
+        sessionStorage.setItem("loggedIn","true");
+        window.location.href="index.html";
+    },600);
+
+    if(attempts >= 5){
+        lockUntil = Date.now() + 30000; // 30 sec lock
+        attempts = 0;
+    }
+}
+
+function showStatus(msg,type){
+    let s = document.getElementById("status");
+    s.textContent = msg;
+    s.className = "status " + type;
+}
+</script>
+
+</body>
+</html>
